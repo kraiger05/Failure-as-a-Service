@@ -17,20 +17,31 @@ function pickRandom<T>(arr: readonly T[], rnd: () => number): T {
 }
 
 describe("message library", () => {
-  it("has categories with at least 10 messages each", () => {
-    for (const [cat, list] of Object.entries(MESSAGES.categories)) {
-      expect(list.length).toBeGreaterThanOrEqual(10);
+  it("has categories with safe + spicy pools", () => {
+    for (const [_cat, bank] of Object.entries(MESSAGES.categories)) {
+      expect(bank).toBeTruthy();
+      expect(Array.isArray((bank as any).safe)).toBe(true);
+      expect(Array.isArray((bank as any).spicy)).toBe(true);
+
+      // Safe should be well-populated
+      expect((bank as any).safe.length).toBeGreaterThanOrEqual(10);
+      // Spicy should also be usable
+      expect((bank as any).spicy.length).toBeGreaterThanOrEqual(10);
+
       // No empty strings
-      expect(list.every((x) => typeof x === "string" && x.trim().length > 0)).toBe(true);
+      expect((bank as any).safe.every((x: string) => typeof x === "string" && x.trim().length > 0)).toBe(true);
+      expect((bank as any).spicy.every((x: string) => typeof x === "string" && x.trim().length > 0)).toBe(true);
     }
   });
 
   it("seeded selection is deterministic", () => {
     const seed = 123456;
     const rnd = mulberry32(seed);
-    const a = pickRandom(MESSAGES.categories.general, rnd);
+    const a = pickRandom((MESSAGES.categories as any).general.safe, rnd);
+
     const rnd2 = mulberry32(seed);
-    const b = pickRandom(MESSAGES.categories.general, rnd2);
+    const b = pickRandom((MESSAGES.categories as any).general.safe, rnd2);
+
     expect(a).toBe(b);
   });
 });

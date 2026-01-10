@@ -1,12 +1,11 @@
-/* Failure As A Service (FaaS)
+/* Failure As A Service (FaaS) - Cloudflare Worker
  *
- * “Enterprise-grade with a bit of meme.”
+ * “Enterprise-grade disappointment, delivered on demand.”
  */
 import MESSAGES from "../data/messages.json";
 
-type Category = keyof typeof MESSAGES.categories;
-
 type Tone = "safe" | "spicy";
+type Category = keyof typeof MESSAGES.categories;
 
 type FailureItem = {
   id: string;
@@ -59,10 +58,6 @@ function parseHttpStatusHint(pathname: string): number | undefined {
   return undefined;
 }
 
-function contentTypeFor(format: string): string {
-  return format === "text" ? "text/plain; charset=utf-8" : "application/json; charset=utf-8";
-}
-
 function wantsText(formatParam: string | null, accept: string | null): boolean {
   if (formatParam) return formatParam.toLowerCase() === "text";
   if (!accept) return false;
@@ -78,7 +73,10 @@ function nowIso(): string {
   return new Date().toISOString();
 }
 
-function setCommonHeaders(res: Response, meta: { reason: string; category: string; tone: Tone; requestId: string; failureFailed?: boolean }) {
+function setCommonHeaders(
+  res: Response,
+  meta: { reason: string; category: string; tone: Tone; requestId: string; failureFailed?: boolean }
+) {
   const h = new Headers(res.headers);
   h.set("Cache-Control", "no-store");
   h.set("X-FAAS-Reason", meta.reason);
@@ -89,9 +87,17 @@ function setCommonHeaders(res: Response, meta: { reason: string; category: strin
   return new Response(res.body, { status: res.status, headers: h });
 }
 
+function getMessagePool(category: Category, tone: Tone): readonly string[] {
+  const bank = MESSAGES.categories[category];
+  const chosen = bank?.[tone] ?? [];
+  const safeFallback = bank?.safe ?? [];
+  const pool = chosen.length > 0 ? chosen : safeFallback;
+  return pool.length > 0 ? pool : ["I… don’t know what to say."];
+}
+
 function buildFailure(seed: number, category: Category, tone: Tone, httpStatusHint?: number): FailureItem {
   const rnd = mulberry32(seed);
-  const pool = MESSAGES.categories[category];
+  const pool = getMessagePool(category, tone);
   const message = pickRandom(pool, rnd);
   return {
     id: uuidLike(seed),
@@ -142,20 +148,21 @@ function homepage(): Response {
 
   <div class="box">
     <h2>Quick start</h2>
-    <pre><code>curl -s ${"https://<your-worker-domain>"}\/v1\/failure</code></pre>
+    <pre><code>curl -s ${"https://<your-domain>"}\/v1\/failure</code></pre>
     <div class="row">
       <button id="btn">Generate failure</button>
       <code id="out" class="muted">Click the button for a fresh excuse.</code>
     </div>
     <p class="muted">Categories: ${categories}</p>
+    <p class="muted"><strong>tone=spicy</strong> is opt-in and may contain profanity.</p>
   </div>
 
   <h2>Endpoints</h2>
   <ul>
-    <li><code>GET /v1/failure</code> — one failure</li>
-    <li><code>GET /v1/failure/batch?n=5</code> — many failures</li>
-    <li><code>GET /v1/categories</code> — category list</li>
-    <li><code>GET /healthz</code> — health check</li>
+    <li><code>GET /v1/failure</code> = one failure</li>
+    <li><code>GET /v1/failure/batch?n=5</code> = many failures</li>
+    <li><code>GET /v1/categories</code> = category list</li>
+    <li><code>GET /healthz</code> = health check</li>
   </ul>
 
   <h2>Parameters</h2>
@@ -163,7 +170,7 @@ function homepage(): Response {
     <li><code>category</code>: one of the categories above</li>
     <li><code>format</code>: <code>json</code> (default) or <code>text</code></li>
     <li><code>seed</code>: deterministic output (useful for tests/demos)</li>
-    <li><code>tone</code>: <code>safe</code> (default) or <code>spicy</code> (still SFW)</li>
+    <li><code>tone</code>: <code>safe</code> (default) or <code>spicy</code> (may contain swearing)</li>
   </ul>
 
   <p class="muted">If the failure itself fails, we respond with: <strong>I… don’t know what to say.</strong></p>
@@ -190,11 +197,20 @@ export default {
       const { pathname, searchParams } = url;
 
       if (request.method !== "GET") {
-        const res = jsonResponse({ error: "method_not_allowed", message: "GET only, please. We’re failing politely." }, 405);
-        return setCommonHeaders(res, { reason: "GET only, please. We’re failing politely.", category: "meta", tone: "safe", requestId });
+        const res = jsonResponse(
+          { error: "method_not_allowed", message: "GET only, please. We’re failing politely." },
+          405
+        );
+        return setCommonHeaders(res, {
+          reason: "GET only, please. We’re failing politely.",
+          category: "meta",
+          tone: "safe",
+          requestId
+        });
       }
 
       if (pathname === "/" || pathname === "/index.html") return homepage();
+
       if (pathname === "/healthz") {
         const res = jsonResponse({ ok: true, service: "faas", time: nowIso() }, 200);
         return setCommonHeaders(res, { reason: "ok", category: "meta", tone: "safe", requestId });
@@ -207,14 +223,14 @@ export default {
 
       // --- Failure endpoints ---
       if (pathname === "/v1/failure" || pathname === "/v1/failure/" || pathname.startsWith("/v1/failure/")) {
-        const category = asCategory(searchParams.get("category")) ?? MESSAGES.defaults.category;
+        const category = asCategory(searchParams.get("category")) ?? (MESSAGES.defaults.category as Category);
         const tone = getTone(searchParams.get("tone"));
 
         const httpStatusHint = parseHttpStatusHint(pathname);
         const seedParam = searchParams.get("seed");
-        const seed = seedParam ? Number(seedParam) : Date.now() ^ (Math.random() * 1e9);
+        const seed = seedParam ? Number(seedParam) : (Date.now() ^ (Math.random() * 1e9));
 
-        const item = buildFailure(seed, category as Category, tone, httpStatusHint);
+        const item = buildFailure(seed, category, tone, httpStatusHint);
 
         const isText = wantsText(searchParams.get("format"), request.headers.get("accept"));
         const res = isText
@@ -236,18 +252,18 @@ export default {
       }
 
       if (pathname === "/v1/failure/batch") {
-        const category = asCategory(searchParams.get("category")) ?? MESSAGES.defaults.category;
+        const category = asCategory(searchParams.get("category")) ?? (MESSAGES.defaults.category as Category);
         const tone = getTone(searchParams.get("tone"));
         const n = clampInt(Number(searchParams.get("n") ?? "5"), 1, MESSAGES.defaults.maxBatch);
 
         const seedParam = searchParams.get("seed");
-        const baseSeed = seedParam ? Number(seedParam) : Date.now() ^ (Math.random() * 1e9);
+        const baseSeed = seedParam ? Number(seedParam) : (Date.now() ^ (Math.random() * 1e9));
         const rnd = mulberry32(baseSeed);
 
         const items: FailureItem[] = [];
         for (let i = 0; i < n; i++) {
           const s = Math.floor(rnd() * 2 ** 32);
-          items.push(buildFailure(s, category as Category, tone));
+          items.push(buildFailure(s, category, tone));
         }
 
         const isText = wantsText(searchParams.get("format"), request.headers.get("accept"));
@@ -261,11 +277,16 @@ export default {
       // Unknown route → 404 with a failure flavour
       const res = jsonResponse({ error: "not_found", message: "I… don’t know what to say.", path: pathname, requestId }, 404);
       return setCommonHeaders(res, { reason: "I… don’t know what to say.", category: "meta", tone: "safe", requestId });
-
-    } catch (err) {
+    } catch (_err) {
       // The failure failed
       const res = jsonResponse({ error: "failure_failed", message: "I… don’t know what to say." }, 500);
-      return setCommonHeaders(res, { reason: "I… don’t know what to say.", category: "meta", tone: "safe", requestId, failureFailed: true });
+      return setCommonHeaders(res, {
+        reason: "I… don’t know what to say.",
+        category: "meta",
+        tone: "safe",
+        requestId,
+        failureFailed: true
+      });
     }
   }
 };

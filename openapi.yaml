@@ -3,7 +3,7 @@ jsonSchemaDialect: https://json-schema.org/draft/2020-12/schema
 
 info:
   title: Failure As A Service (FaaS)
-  version: 0.1.0
+  version: 0.2.0
   description: Enterprise-grade disappointment, delivered on demand.
 
 servers:
@@ -37,14 +37,10 @@ paths:
         "200":
           description: OK
           headers:
-            X-FAAS-Reason:
-              schema: { type: string }
-            X-FAAS-Category:
-              schema: { type: string }
-            X-FAAS-Tone:
-              schema: { type: string }
-            X-FAAS-Request-Id:
-              schema: { type: string }
+            X-FAAS-Reason: { schema: { type: string } }
+            X-FAAS-Category: { schema: { type: string } }
+            X-FAAS-Tone: { schema: { type: string } }
+            X-FAAS-Request-Id: { schema: { type: string } }
           content:
             application/json:
               schema:
@@ -58,14 +54,10 @@ paths:
         "200":
           description: OK
           headers:
-            X-FAAS-Reason:
-              schema: { type: string }
-            X-FAAS-Category:
-              schema: { type: string }
-            X-FAAS-Tone:
-              schema: { type: string }
-            X-FAAS-Request-Id:
-              schema: { type: string }
+            X-FAAS-Reason: { schema: { type: string } }
+            X-FAAS-Category: { schema: { type: string } }
+            X-FAAS-Tone: { schema: { type: string } }
+            X-FAAS-Request-Id: { schema: { type: string } }
           content:
             application/json:
               schema:
@@ -84,14 +76,10 @@ paths:
         "200":
           description: OK
           headers:
-            X-FAAS-Reason:
-              schema: { type: string }
-            X-FAAS-Category:
-              schema: { type: string }
-            X-FAAS-Tone:
-              schema: { type: string }
-            X-FAAS-Request-Id:
-              schema: { type: string }
+            X-FAAS-Reason: { schema: { type: string } }
+            X-FAAS-Category: { schema: { type: string } }
+            X-FAAS-Tone: { schema: { type: string } }
+            X-FAAS-Request-Id: { schema: { type: string } }
           content:
             application/json:
               schema:
@@ -112,15 +100,12 @@ paths:
       summary: Get a failure message with an HTTP status hint
       description: |
         Same as `/v1/failure`, but provides an `httpStatusHint` derived from the path.
-        Note: the API still returns HTTP 200 for successful responses; the hint is metadata.
+        Note: successful responses still return HTTP 200; the hint is metadata.
       parameters:
         - name: status
           in: path
           required: true
-          schema:
-            type: integer
-            minimum: 100
-            maximum: 599
+          schema: { type: integer, minimum: 100, maximum: 599 }
         - $ref: "#/components/parameters/category"
         - $ref: "#/components/parameters/format"
         - $ref: "#/components/parameters/seed"
@@ -129,14 +114,41 @@ paths:
         "200":
           description: OK
           headers:
-            X-FAAS-Reason:
-              schema: { type: string }
-            X-FAAS-Category:
-              schema: { type: string }
-            X-FAAS-Tone:
-              schema: { type: string }
-            X-FAAS-Request-Id:
-              schema: { type: string }
+            X-FAAS-Reason: { schema: { type: string } }
+            X-FAAS-Category: { schema: { type: string } }
+            X-FAAS-Tone: { schema: { type: string } }
+            X-FAAS-Request-Id: { schema: { type: string } }
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailureResponse"
+            text/plain:
+              schema:
+                type: string
+
+  /v1/failure/http/{status}:
+    get:
+      tags: [failures]
+      summary: Get a failure message with an HTTP status hint (alternate path)
+      description: |
+        Alternate form of `/v1/failure/{status}` supported by the service.
+      parameters:
+        - name: status
+          in: path
+          required: true
+          schema: { type: integer, minimum: 100, maximum: 599 }
+        - $ref: "#/components/parameters/category"
+        - $ref: "#/components/parameters/format"
+        - $ref: "#/components/parameters/seed"
+        - $ref: "#/components/parameters/tone"
+      responses:
+        "200":
+          description: OK
+          headers:
+            X-FAAS-Reason: { schema: { type: string } }
+            X-FAAS-Category: { schema: { type: string } }
+            X-FAAS-Tone: { schema: { type: string } }
+            X-FAAS-Request-Id: { schema: { type: string } }
           content:
             application/json:
               schema:
@@ -159,14 +171,10 @@ paths:
         "200":
           description: OK
           headers:
-            X-FAAS-Reason:
-              schema: { type: string }
-            X-FAAS-Category:
-              schema: { type: string }
-            X-FAAS-Tone:
-              schema: { type: string }
-            X-FAAS-Request-Id:
-              schema: { type: string }
+            X-FAAS-Reason: { schema: { type: string } }
+            X-FAAS-Category: { schema: { type: string } }
+            X-FAAS-Tone: { schema: { type: string } }
+            X-FAAS-Request-Id: { schema: { type: string } }
           content:
             application/json:
               schema:
@@ -181,9 +189,8 @@ components:
       name: category
       in: query
       required: false
-      schema:
-        type: string
-      description: Message category (e.g. general, business, devops, security, product, retro)
+      schema: { type: string }
+      description: Message category (e.g. general, business, devops, security, product)
 
     format:
       name: format
@@ -199,8 +206,7 @@ components:
       name: seed
       in: query
       required: false
-      schema:
-        type: string
+      schema: { type: string }
       description: Deterministic output seed (stringified number recommended).
 
     tone:
@@ -211,7 +217,9 @@ components:
         type: string
         enum: [safe, spicy]
         default: safe
-      description: Tone of messages. Both are intended to be workplace-safe.
+      description: |
+        Tone of messages.
+        `spicy` is opt-in and may include profanity and ruder humour.
 
     n:
       name: n
@@ -230,12 +238,9 @@ components:
       additionalProperties: false
       required: [id, message, category, tone]
       properties:
-        id:
-          type: string
-        message:
-          type: string
-        category:
-          type: string
+        id: { type: string }
+        message: { type: string }
+        category: { type: string }
         tone:
           type: string
           enum: [safe, spicy]
@@ -249,12 +254,9 @@ components:
       additionalProperties: false
       required: [id, message, category, tone, httpStatusHint, time, requestId]
       properties:
-        id:
-          type: string
-        message:
-          type: string
-        category:
-          type: string
+        id: { type: string }
+        message: { type: string }
+        category: { type: string }
         tone:
           type: string
           enum: [safe, spicy]
@@ -265,8 +267,7 @@ components:
         time:
           type: string
           format: date-time
-        requestId:
-          type: string
+        requestId: { type: string }
 
     BatchResponse:
       type: object
@@ -280,16 +281,14 @@ components:
         count:
           type: integer
           minimum: 0
-        category:
-          type: string
+        category: { type: string }
         tone:
           type: string
           enum: [safe, spicy]
         time:
           type: string
           format: date-time
-        requestId:
-          type: string
+        requestId: { type: string }
 
     CategoriesResponse:
       type: object
@@ -298,20 +297,16 @@ components:
       properties:
         categories:
           type: array
-          items:
-            type: string
-        version:
-          type: integer
+          items: { type: string }
+        version: { type: integer }
 
     HealthResponse:
       type: object
       additionalProperties: false
       required: [ok, service, time]
       properties:
-        ok:
-          type: boolean
-        service:
-          type: string
+        ok: { type: boolean }
+        service: { type: string }
         time:
           type: string
           format: date-time
@@ -321,10 +316,8 @@ components:
       additionalProperties: false
       required: [error, message]
       properties:
-        error:
-          type: string
-        message:
-          type: string
+        error: { type: string }
+        message: { type: string }
         path:
           type: [string, "null"]
         requestId:
